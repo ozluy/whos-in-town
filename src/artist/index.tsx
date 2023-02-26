@@ -1,39 +1,52 @@
-import { Card, Alert, Typography } from "antd";
-import React, { useState } from "react";
-
+import { Card } from "antd";
+import { useState } from "react";
+import useLocalStorage from "use-local-storage";
 import ArtistEvents from "./ArtistEvents";
 import ArtistForm from "./ArtistForm";
 import ArtistProfile from "./ArtistProfile";
+import { ArtistContext } from "./ArtistContext";
+import { Event } from "./types";
 
-const Artist: React.FC = () => {
+const SearchArtist = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [response, setResponse] = useState<any>(null);
+  const [showFavorites, setShowFavorites] = useState<boolean>(false);
+  const [savedFavorites, setSavedFavorites] = useLocalStorage<Event[]>(
+    "savedFavorites",
+    []
+  );
+  const [favorites, setFavorites] = useState<Event[]>(savedFavorites);
 
   return (
-    <>
-      <ArtistForm
-        setLoading={setLoading}
-        setResponse={setResponse}
-        loading={loading}
-      />
-      {response && (
-        <Card>
+    <ArtistContext.Provider
+      value={{
+        events: response?.events,
+        artist: response?.artist,
+        favoriteEvents: favorites,
+        showFavorites,
+        response,
+        setLoading,
+        setShowFavorites,
+        setFavoriteEvent: (events) => {
+          setSavedFavorites(events);
+          setFavorites(events);
+        },
+        setResponse,
+        loading,
+      }}
+    >
+      <ArtistForm />
+      <Card>
+        {!showFavorites && (
           <ArtistProfile artist={response?.artist} loading={loading} />
-          <Typography.Title
-            level={5}
-            style={{ marginTop: 24, marginBottom: 12 }}
-          >
-            Upcoming Events ( {response?.artist?.upcoming_event_count})
-          </Typography.Title>
-          <ArtistEvents
-            events={response?.events}
-            loading={loading}
-            errorMessage={response?.events?.errorMessage}
-          />
-        </Card>
-      )}
-    </>
+        )}
+        <ArtistEvents
+          events={response?.events}
+          errorMessage={response?.events?.errorMessage}
+        />
+      </Card>
+    </ArtistContext.Provider>
   );
 };
 
-export default Artist;
+export default SearchArtist;

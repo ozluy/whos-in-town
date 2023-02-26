@@ -6,3 +6,11 @@
 .Artist_Event_Title {
  font-size: 14px;
 }
+
+.Events_Header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+}
