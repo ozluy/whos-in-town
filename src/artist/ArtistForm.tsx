@@ -13,21 +13,22 @@ const ArtistForm = () => {
   const { setLoading, setResponse, setShowFavorites, favoriteEvents } =
     useContext(ArtistContext);
 
-  const onFinish = (values: { artistName: string }) => {
+  const onFinish = async (values: { artistName: string }) => {
     const artistName = replaceChar(values.artistName);
     setLoading?.(true);
+    setShowFavorites?.(false);
     setResponse?.(null);
-    Promise.all([fetchArtist(artistName), fetchArtistEvents(artistName)]).then(
-      (responses) => {
-        setLoading?.(false);
-        const [artist, events] = responses;
-        artist?.name && form.setFieldValue("artistName", "");
-        setResponse?.({
-          events,
-          artist,
-        });
-      }
-    );
+    const responses = await Promise.all([
+      fetchArtist(artistName),
+      fetchArtistEvents(artistName),
+    ]);
+    const [artist, events] = responses;
+    setLoading?.(false);
+    artist?.name && form.setFieldValue("artistName", "");
+    setResponse?.({
+      events,
+      artist,
+    });
   };
 
   return (

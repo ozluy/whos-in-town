@@ -36,15 +36,15 @@ const SearchArtist = () => {
       }}
     >
       <ArtistForm />
-      <Card>
-        {!showFavorites && (
+      {(response || showFavorites) && (
+        <Card>
           <ArtistProfile artist={response?.artist} loading={loading} />
-        )}
-        <ArtistEvents
-          events={response?.events}
-          errorMessage={response?.events?.errorMessage}
-        />
-      </Card>
+          <ArtistEvents
+            events={response?.events}
+            errorMessage={response?.events?.errorMessage}
+          />
+        </Card>
+      )}
     </ArtistContext.Provider>
   );
 };

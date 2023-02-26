@@ -6,7 +6,7 @@ import { Event } from "./types";
 import { ArtistContext } from "./ArtistContext";
 
 type ArtistEventsProps = {
-  events: Event[];
+  events?: Event[];
   errorMessage?: string;
 };
 
